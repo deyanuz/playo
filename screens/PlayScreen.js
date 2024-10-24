@@ -42,11 +42,11 @@ const PlayScreen = () => {
             <Text style={{ fontSize: 16, fontWeight: "500", color: "white" }}>
               KolaBagan
             </Text>
-            <MaterialIcons name="keyboard-arrow-down" size={25} color="white" />
+            <MaterialIcons name="keyboard-arrow-down" size={27} color="white" />
           </View>
           <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
-            <Ionicons name="chatbox-outline" size={25} color="white" />
-            <Ionicons name="notifications-outline" size={25} color="white" />
+            <Ionicons name="chatbox-outline" size={27} color="white" />
+            <Ionicons name="notifications-outline" size={27} color="white" />
             <Image
               style={{ width: 30, height: 30, borderRadius: 15 }}
               source={{

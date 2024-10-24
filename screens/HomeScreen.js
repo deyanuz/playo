@@ -19,7 +19,7 @@ const HomeScreen = () => {
       headerTitle: "",
       headerLeft: () => (
         <View>
-          <Text style={{ marginLeft: 15 }}>Zunayed</Text>
+          <Text style={{ marginLeft: 15 }}>KolaBagan</Text>
         </View>
       ),
       headerRight: () => (
@@ -31,8 +31,8 @@ const HomeScreen = () => {
             marginRight: 15,
           }}
         >
-          <Ionicons name="chatbox-outline" size={25} color="black" />
-          <Ionicons name="notifications-outline" size={25} color="black" />
+          <Ionicons name="chatbox-outline" size={27} color="black" />
+          <Ionicons name="notifications-outline" size={27} color="black" />
 
           <Pressable>
             <Image

@@ -48,6 +48,7 @@ const StackNavigator = () => {
           name="BOOK"
           component={BookScreen}
           options={{
+            headerShown: false,
             tabBarActiveTintColor: "green",
             tabBarIcon: ({ focused }) =>
               focused ? (
