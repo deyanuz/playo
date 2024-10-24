@@ -34,6 +34,7 @@ const StackNavigator = () => {
           name="PLAY"
           component={PlayScreen}
           options={{
+            headerShown: false,
             tabBarActiveTintColor: "#9d23bc",
             tabBarIcon: ({ focused }) =>
               focused ? (
