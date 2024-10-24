@@ -1,11 +1,14 @@
 import { Pressable, StyleSheet, Text, View, Image } from "react-native";
 import React from "react";
 import AntDesign from "react-native-vector-icons/AntDesign";
+import { useNavigation } from "@react-navigation/native";
 
 const VanueCard = ({ item }) => {
+  const navigation = useNavigation();
   return (
     <View style={{ margin: 15 }}>
       <Pressable
+        onPress={() => navigation.navigate("Vanue", { item })}
         style={{
           backgroundColor: "white",
           borderRadius: 7,

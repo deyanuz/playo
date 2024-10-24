@@ -10,6 +10,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
 import { NavigationContainer } from "@react-navigation/native";
+import VanueInfoScreen from "../screens/VanueInfoScreen";
 
 const StackNavigator = () => {
   const Stack = createNativeStackNavigator();
@@ -83,6 +84,13 @@ const StackNavigator = () => {
         <Stack.Screen
           name="Main"
           component={BottomTabs}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="Vanue"
+          component={VanueInfoScreen}
           options={{
             headerShown: false,
           }}
