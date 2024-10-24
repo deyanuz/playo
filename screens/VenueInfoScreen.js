@@ -15,7 +15,7 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 import AntDesign from "react-native-vector-icons/AntDesign";
 import Amenities from "../components/Amenities";
 
-const VanueInfoScreen = () => {
+const VenueInfoScreen = () => {
   const route = useRoute();
   return (
     <>
@@ -91,7 +91,7 @@ const VanueInfoScreen = () => {
                     padding: 10,
                   }}
                 >
-                  <Text>Rate the vanue</Text>
+                  <Text>Rate the venue</Text>
                 </Pressable>
               </View>
               <View>
@@ -122,6 +122,7 @@ const VanueInfoScreen = () => {
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
               {route.params?.item.sportsAvailable.map((it, i) => (
                 <View
+                  key={i}
                   style={{
                     borderColor: "#686868",
                     margin: 10,
@@ -197,6 +198,6 @@ const VanueInfoScreen = () => {
   );
 };
 
-export default VanueInfoScreen;
+export default VenueInfoScreen;
 
 const styles = StyleSheet.create({});

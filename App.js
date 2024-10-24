@@ -14,3 +14,5 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
 });
+
+//mongodb+srv://zunayedkhanofficial:<db_password>@cluster0.tmtff.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0

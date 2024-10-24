@@ -1,4 +1,4 @@
-const vanues = [
+const venues = [
   {
     id: "0",
     name: "DDSA - St.Joseph's Boys' High School (European)",
@@ -184,4 +184,4 @@ const vanues = [
     ],
   },
 ];
-export default vanues;
+export default venues;

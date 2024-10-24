@@ -3,12 +3,12 @@ import React from "react";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import { useNavigation } from "@react-navigation/native";
 
-const VanueCard = ({ item }) => {
+const VenueCard = ({ item }) => {
   const navigation = useNavigation();
   return (
     <View style={{ margin: 15 }}>
       <Pressable
-        onPress={() => navigation.navigate("Vanue", { item })}
+        onPress={() => navigation.navigate("Venue", { item })}
         style={{
           backgroundColor: "white",
           borderRadius: 7,
@@ -85,6 +85,6 @@ const VanueCard = ({ item }) => {
   );
 };
 
-export default VanueCard;
+export default VenueCard;
 
 const styles = StyleSheet.create({});

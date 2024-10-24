@@ -11,8 +11,8 @@ import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import vanues from "../vanues";
-import VanueCard from "../components/VanueCard";
+import venues from "../venues";
+import VenueCard from "../components/VenueCard";
 
 const BookScreen = () => {
   return (
@@ -53,7 +53,7 @@ const BookScreen = () => {
           borderRadius: 25,
         }}
       >
-        <TextInput placeholder="Search for vanues" />
+        <TextInput placeholder="Search for venues" />
         <Ionicons name="search" size={27} color="gray" />
       </View>
       <Pressable
@@ -96,9 +96,9 @@ const BookScreen = () => {
         </View>
       </Pressable>
       <FlatList
-        data={vanues}
+        data={venues}
         keyExtractor={(item) => item.id}
-        renderItem={({ item }) => <VanueCard item={item} />}
+        renderItem={({ item }) => <VenueCard item={item} />}
         contentContainerStyle={{ paddingBottom: 20 }}
         showsVerticalScrollIndicator={false}
       />
