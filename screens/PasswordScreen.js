@@ -1,15 +1,26 @@
 import { Image, StyleSheet, Text, View, TextInput } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { getRegProgress, saveRegProgress } from "../registrationUtils";
 
 const PasswordScreen = () => {
   const [password, setPassword] = useState();
   const navigation = useNavigation();
+  useEffect(() => {
+    getRegProgress("Password").then((data) => {
+      if (data) {
+        setPassword(data.password || "");
+      }
+    });
+  }, []);
   const handleNext = () => {
+    if (password?.trim() !== "") {
+      saveRegProgress("Password", { password });
+    }
     navigation.navigate("Name");
   };
   return (

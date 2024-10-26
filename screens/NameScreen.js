@@ -1,14 +1,26 @@
 import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { useNavigation } from "@react-navigation/native";
+import { getRegProgress, saveRegProgress } from "../registrationUtils";
 
 const NameScreen = () => {
-  const [fname, setFname] = useState("");
-  const [lname, setLname] = useState("");
+  const [firstName, setFname] = useState("");
+  const [lastName, setLname] = useState("");
   const navigation = useNavigation();
+  useEffect(() => {
+    getRegProgress("Name").then((data) => {
+      if (data) {
+        setFname(data.firstName || "");
+        setLname(data.lastName || "");
+      }
+    });
+  }, []);
   const saveName = () => {
+    if (firstName.trim() !== "") {
+      saveRegProgress("Name", { firstName, lastName });
+    }
     navigation.navigate("Image");
   };
   return (
@@ -38,7 +50,7 @@ const NameScreen = () => {
           <View>
             <Text style={{ fontSize: 16, color: "gray" }}>First Name *</Text>
             <TextInput
-              value={fname}
+              value={firstName}
               onChangeText={setFname}
               style={{
                 padding: 10,
@@ -62,7 +74,7 @@ const NameScreen = () => {
           <View>
             <Text style={{ fontSize: 16, color: "gray" }}>Last Name</Text>
             <TextInput
-              value={lname}
+              value={lastName}
               onChangeText={setLname}
               style={{
                 padding: 10,
@@ -81,7 +93,7 @@ const NameScreen = () => {
           style={{
             color: "white",
             padding: 15,
-            backgroundColor: fname?.length > 0 ? "#a71ec9" : "#e0e0e0",
+            backgroundColor: firstName?.length > 0 ? "#a71ec9" : "#e0e0e0",
             marginTop: "auto",
             marginBottom: 30,
             padding: 12,
@@ -92,7 +104,7 @@ const NameScreen = () => {
           <Text
             style={{
               textAlign: "center",
-              color: fname?.length > 0 ? "white" : "gray",
+              color: firstName?.length > 0 ? "white" : "gray",
               fontSize: 15,
               fontWeight: "500",
             }}

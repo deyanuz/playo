@@ -1,11 +1,25 @@
 import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
+import { getRegProgress, saveRegProgress } from "../registrationUtils";
 
 const RegisterScreen = () => {
-  const navigation = useNavigation();
   const [email, setEmail] = useState("");
+  const navigation = useNavigation();
+  useEffect(() => {
+    getRegProgress("Register").then((data) => {
+      if (data) {
+        setEmail(data.email || "");
+      }
+    });
+  }, []);
+  const next = () => {
+    if (email.trim() !== "") {
+      saveRegProgress("Register", { email });
+    }
+    navigation.navigate("Password");
+  };
   return (
     <SafeAreaView style={{}}>
       <View style={{ padding: 30 }}>
@@ -25,7 +39,7 @@ const RegisterScreen = () => {
             }}
           />
           <Pressable
-            onPress={() => navigation.navigate("Password")}
+            onPress={next}
             style={{
               padding: 15,
               backgroundColor: email?.length > 4 ? "#a71ec9" : "#e0e0e0",

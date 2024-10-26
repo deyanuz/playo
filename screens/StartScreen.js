@@ -145,9 +145,7 @@ const StartScreen = () => {
           />
         </View>
       </SafeAreaView>
-      <View
-        style={{ padding: 10, backgroundColor: "white", marginTop: "auto" }}
-      >
+      <View style={{ padding: 10, marginTop: "auto" }}>
         <Pressable
           onPress={() => navigation.navigate("Register")}
           style={{

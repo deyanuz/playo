@@ -6,16 +6,27 @@ import {
   TextInput,
   View,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import images from "../images";
 import { useNavigation } from "@react-navigation/native";
+import { getRegProgress, saveRegProgress } from "../registrationUtils";
 
 const SelectImageScreen = () => {
   const [image, setImage] = useState();
   const navigation = useNavigation();
+  useEffect(() => {
+    getRegProgress("Image").then((data) => {
+      if (data) {
+        setImage(data.image || "");
+      }
+    });
+  }, []);
   const saveImage = () => {
+    if (image?.trim() !== "") {
+      saveRegProgress("Image", { image });
+    }
     navigation.navigate("PreFinal");
   };
   return (
