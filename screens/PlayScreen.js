@@ -10,10 +10,12 @@ import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import { useNavigation } from "@react-navigation/native";
 
 const PlayScreen = () => {
   const [option, setOption] = useState("my-sports");
   const [sport, setSport] = useState("badminton");
+  const navigation = useNavigation();
 
   return (
     <SafeAreaView>
@@ -211,7 +213,7 @@ const PlayScreen = () => {
           backgroundColor: "white",
         }}
       >
-        <Pressable>
+        <Pressable onPress={() => navigation.navigate("Create")}>
           <Text style={{ fontWeight: "bold" }}> Create Game</Text>
         </Pressable>
         <View

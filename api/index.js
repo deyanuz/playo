@@ -8,6 +8,7 @@ const jwt = require("jsonwebtoken");
 const User = require("./models/user");
 const Game = require("./models/game");
 const Venue = require("./models/venue");
+const venues = require("./venues");
 
 const app = express();
 const port = 8000;
@@ -57,5 +58,33 @@ app.post("/login", async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status().json({ error: "login error" });
+  }
+});
+
+//add venues to the backend
+/*
+const addVenues = async () => {
+  for (const venueData of venues) {
+    const existingVenue = await Venue.findOne({ name: venueData?.name });
+    if (!existingVenue) {
+      const newVenue = new Venue(venueData);
+      await newVenue.save();
+      console.log("success");
+    } else {
+      console.log("skip");
+    }
+  }
+};
+addVenues().catch((e) => console.error(e));
+*/
+
+//get venue data
+app.get("/venues", async (req, res) => {
+  try {
+    const venues = await Venue.find({});
+    res.status(200).json(venues);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to fetch venues" });
   }
 });

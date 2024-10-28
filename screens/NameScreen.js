@@ -1,4 +1,11 @@
-import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import {
+  Platform,
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -25,7 +32,13 @@ const NameScreen = () => {
   };
   return (
     <>
-      <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
+      <SafeAreaView
+        style={{
+          flex: 1,
+          backgroundColor: "white",
+          paddingTop: Platform.OS == "android" ? 20 : 0,
+        }}
+      >
         <View style={{ marginHorizontal: 10 }}>
           <Ionicons name="arrow-back" size={25} color="black" />
         </View>

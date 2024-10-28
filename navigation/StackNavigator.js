@@ -19,6 +19,8 @@ import NameScreen from "../screens/NameScreen";
 import SelectImageScreen from "../screens/SelectImageScreen";
 import PreFinalScreen from "../screens/PreFinalScreen";
 import { AuthContext } from "../AuthContext";
+import CreateActivity from "../screens/CreateActivity";
+import TagVanueScreen from "../screens/TagVanueScreen";
 
 const StackNavigator = () => {
   const Stack = createNativeStackNavigator();
@@ -138,6 +140,20 @@ const StackNavigator = () => {
         <Stack.Screen
           name="Venue"
           component={VenueInfoScreen}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="Create"
+          component={CreateActivity}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="TagVanue"
+          component={TagVanueScreen}
           options={{
             headerShown: false,
           }}

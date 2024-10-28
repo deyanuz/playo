@@ -1,4 +1,11 @@
-import { Image, StyleSheet, Text, View, TextInput } from "react-native";
+import {
+  Image,
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  Platform,
+} from "react-native";
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AntDesign from "react-native-vector-icons/AntDesign";
@@ -24,7 +31,13 @@ const PasswordScreen = () => {
     navigation.navigate("Name");
   };
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
+    <SafeAreaView
+      style={{
+        flex: 1,
+        backgroundColor: "white",
+        paddingTop: Platform.OS == "android" ? 20 : 0,
+      }}
+    >
       <View style={{ marginTop: 90, marginHorizontal: 20 }}>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           <View

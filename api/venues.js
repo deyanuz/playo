@@ -488,4 +488,4 @@ const venues = [
   },
   // Add more venues as need
 ];
-export default venues;
+module.exports = venues;

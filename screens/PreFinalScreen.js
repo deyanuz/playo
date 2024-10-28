@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Pressable } from "react-native";
+import { StyleSheet, Text, View, Pressable, Platform } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AuthContext } from "../AuthContext";
@@ -55,7 +55,7 @@ const PreFinalScreen = () => {
   const registerUser = async () => {
     try {
       const res = await axios
-        .post("http://192.168.0.102:8000/register", userData)
+        .post("http://192.168.0.103:8000/register", userData)
         .then(async (res) => {
           const token = res.data;
           await AsyncStorage.setItem("token", token);
@@ -68,7 +68,13 @@ const PreFinalScreen = () => {
   };
   return (
     <>
-      <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
+      <SafeAreaView
+        style={{
+          flex: 1,
+          backgroundColor: "white",
+          paddingTop: Platform.OS == "android" ? 20 : 0,
+        }}
+      >
         <View style={{ marginTop: 80 }}>
           <Text style={{ fontSize: 32, fontWeight: "bold", marginLeft: 20 }}>
             All set to register
