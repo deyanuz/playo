@@ -24,7 +24,7 @@ const TagVanueScreen = () => {
   useEffect(() => {
     const fetchVenues = async () => {
       try {
-        const response = await axios.get("http://192.168.0.103:8000/venues");
+        const response = await axios.get("http://192.168.0.102:8000/venues");
         setVenues(response.data);
       } catch (error) {
         console.error(error);

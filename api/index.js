@@ -88,3 +88,23 @@ app.get("/venues", async (req, res) => {
     res.status(500).json({ message: "Failed to fetch venues" });
   }
 });
+
+app.post("/create-game", async (req, res) => {
+  try {
+    const { sport, area, date, time, admin, totalPlayers } = req.body;
+    const newGame = new Game({
+      sport,
+      area,
+      date,
+      time,
+      admin,
+      totalPlayers,
+      players: [admin],
+    });
+    const savedGame = newGame.save();
+    res.status(200).json(savedGame);
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ message: error });
+  }
+});

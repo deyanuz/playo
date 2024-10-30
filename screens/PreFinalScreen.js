@@ -55,7 +55,7 @@ const PreFinalScreen = () => {
   const registerUser = async () => {
     try {
       const res = await axios
-        .post("http://192.168.0.103:8000/register", userData)
+        .post("http://192.168.0.102:8000/register", userData)
         .then(async (res) => {
           const token = res.data;
           await AsyncStorage.setItem("token", token);

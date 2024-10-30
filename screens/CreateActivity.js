@@ -5,8 +5,9 @@ import {
   Text,
   TextInput,
   View,
+  Alert,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import Entypo from "react-native-vector-icons/Entypo";
@@ -18,22 +19,36 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { BottomModal, ModalContent, SlideAnimation } from "react-native-modals";
 import moment from "moment";
+import { AuthContext } from "../AuthContext";
+import axios from "axios";
 
 const CreateActivity = () => {
   const [sport, setSport] = useState("");
   const [area, setArea] = useState("");
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
+  const [timeInterval, setTimeInterval] = useState("");
   const [selected, setSelected] = useState(["public"]);
-  const [nPlayers, setNPlayers] = useState(0);
+  const [totalPlayers, setTotalPlayers] = useState(0);
   const navigation = useNavigation();
   const route = useRoute();
   const [taggedVenue, setTaggedVenue] = useState(null);
   const [modalVis, setModalVis] = useState(false);
-
+  const { userID } = useContext(AuthContext);
+  console.log(userID);
+  useEffect(() => {
+    if (route?.params?.timeInterval) {
+      setTimeInterval(route?.params?.timeInterval);
+    }
+  }, [route.params]);
   useEffect(() => {
     if (route.params?.taggedVenue) setTaggedVenue(route.params?.taggedVenue);
   }, [route?.params]);
+  useEffect(() => {
+    if (taggedVenue) {
+      setArea(taggedVenue);
+    }
+  }, [taggedVenue]);
 
   const selectDate = (date) => {
     setModalVis(!modalVis);
@@ -60,6 +75,42 @@ const CreateActivity = () => {
     }
     return dates;
   };
+  const createGame = async () => {
+    try {
+      const admin = userID;
+      const time = timeInterval;
+      const gameData = {
+        sport,
+        area: taggedVenue,
+        date,
+        time,
+        admin,
+        totalPlayers: totalPlayers,
+      };
+      const response = await axios.post(
+        "http://192.168.0.102:8000/create-game",
+        gameData
+      );
+      if (response.status == 200) {
+        Alert.alert("Success!", "Game created successfully", [
+          {
+            text: "Cancel",
+            onPress: () => console.log("Ask me later pressed"),
+          },
+          { text: "OK", onPress: () => navigation.goBack() },
+        ]);
+
+        setSport("");
+        setArea("");
+        setTimeInterval("");
+        setDate("");
+        setTotalPlayers("");
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const dates = generateDates();
   return (
     <>
@@ -154,6 +205,7 @@ const CreateActivity = () => {
               style={{ borderColor: "#e0e0e0", borderWidth: 1, height: 1 }}
             />
             <Pressable
+              onPress={() => navigation.navigate("Time")}
               style={{
                 flexDirection: "row",
                 alignItems: "center",
@@ -167,8 +219,10 @@ const CreateActivity = () => {
                 <Text style={{ fontSize: 17, fontWeight: "500" }}>Time</Text>
                 <TextInput
                   style={{ marginTop: 7, fontSize: 15 }}
-                  placeholderTextColor={time ? "black" : "gray"}
-                  placeholder={time ? time : "Pick exact time..."}
+                  placeholderTextColor={timeInterval ? "black" : "gray"}
+                  placeholder={
+                    timeInterval ? timeInterval : "Pick exact time..."
+                  }
                 />
               </View>
               <AntDesign name="arrowright" size={25} color="gray" />
@@ -327,8 +381,8 @@ const CreateActivity = () => {
               <View style={{ marginVertical: 3 }}>
                 <View>
                   <TextInput
-                    value={nPlayers}
-                    onChangeText={setNPlayers}
+                    value={totalPlayers}
+                    onChangeText={setTotalPlayers}
                     style={{
                       padding: 10,
                       backgroundColor: "white",
@@ -439,6 +493,37 @@ const CreateActivity = () => {
           </View>
         </ScrollView>
       </SafeAreaView>
+      <View style={{ backgroundColor: "white" }}>
+        <Pressable
+          onPress={createGame}
+          style={{
+            backgroundColor:
+              sport && area && date && timeInterval && totalPlayers
+                ? "#c518f0"
+                : "#e0e0e0",
+            marginTop: "auto",
+            marginBottom: 30,
+            padding: 12,
+            marginHorizontal: 10,
+            borderRadius: 4,
+          }}
+        >
+          <Text
+            style={{
+              textAlign: "center",
+              color:
+                sport && area && date && timeInterval && totalPlayers
+                  ? "white"
+                  : "gray",
+              fontSize: 15,
+              fontWeight: "500",
+            }}
+          >
+            Create Activity
+          </Text>
+        </Pressable>
+      </View>
+
       <BottomModal
         onBackdropPress={() => setModalVis(!modalVis)}
         swipeDirection={["up", "down"]}
@@ -481,7 +566,7 @@ const CreateActivity = () => {
                   alignItems: "center",
                 }}
               >
-                <Text>{item?.displayDate}</Text>
+                <Text style={{ textAlign: "center" }}>{item?.displayDate}</Text>
                 <Text style={{ color: "gray", marginTop: 7 }}>
                   {item?.dayOfWeek}
                 </Text>

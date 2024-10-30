@@ -21,6 +21,7 @@ import PreFinalScreen from "../screens/PreFinalScreen";
 import { AuthContext } from "../AuthContext";
 import CreateActivity from "../screens/CreateActivity";
 import TagVanueScreen from "../screens/TagVanueScreen";
+import SelectTimeScreen from "../screens/SelectTimeScreen";
 
 const StackNavigator = () => {
   const Stack = createNativeStackNavigator();
@@ -158,6 +159,7 @@ const StackNavigator = () => {
             headerShown: false,
           }}
         />
+        <Stack.Screen name="Time" component={SelectTimeScreen} />
       </Stack.Navigator>
     );
   };

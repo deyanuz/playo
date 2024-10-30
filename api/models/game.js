@@ -41,16 +41,18 @@ const gameSchema = new mongoose.Schema({
     question: String,
     answer: String,
   },
-  requests: {
-    userId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
+  requests: [
+    {
+      userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: true,
+      },
+      comment: {
+        type: String,
+      },
     },
-    comment: {
-      type: String,
-    },
-  },
+  ],
   isBooked: {
     type: Boolean,
     default: false,
