@@ -7,13 +7,19 @@ import {
   Pressable,
   ImageBackground,
 } from "react-native";
-import React, { useLayoutEffect } from "react";
+import React, { useContext, useEffect, useLayoutEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import AntDesign from "react-native-vector-icons/AntDesign";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
+import IpAddress from "../DeviceConfig";
+import { AuthContext } from "../AuthContext";
 
 const HomeScreen = () => {
   const navigation = useNavigation();
+  const [user, setUser] = useState(null);
+  const { userID, setUserID, setToken } = useContext(AuthContext);
   useLayoutEffect(() => {
     navigation.setOptions({
       headerTitle: "",
@@ -34,18 +40,18 @@ const HomeScreen = () => {
           <Ionicons name="chatbox-outline" size={27} color="black" />
           <Ionicons name="notifications-outline" size={27} color="black" />
 
-          <Pressable>
+          <Pressable onPress={clearAuthToken}>
             <Image
               style={{ width: 30, height: 30, borderRadius: 15 }}
               source={{
-                uri: "https://lh3.googleusercontent.com/ogw/AF2bZyigIIj8b2GrRpAzoac3cju3600tcaLW8FmmQ6uRcYF4Eg=s32-c-mo",
+                uri: user?.image,
               }}
             />
           </Pressable>
         </View>
       ),
     });
-  }, []);
+  }, [user]);
   const data = [
     {
       id: "10",
@@ -76,6 +82,24 @@ const HomeScreen = () => {
       description: "Show more",
     },
   ];
+  const clearAuthToken = async () => {
+    try {
+      await AsyncStorage.removeItem("token");
+      setToken("");
+      setUserID("");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    if (userID) {
+      fetchUser();
+    }
+  }, [userID]);
+  const fetchUser = async () => {
+    const response = await axios.get(`http://${IpAddress}:8000/user/${userID}`);
+    setUser(response.data);
+  };
   return (
     <ScrollView style={{ flex: 1, backgroundColor: "#f8f8f8" }}>
       <View
@@ -92,14 +116,14 @@ const HomeScreen = () => {
           shadowColor: "#000",
         }}
       >
-        <View>
+        <Pressable>
           <Image
             style={{ width: 40, height: 40, borderRadius: 25 }}
             source={{
               uri: "https://cdn-icons-png.flaticon.com/128/785/785116.png",
             }}
           />
-        </View>
+        </Pressable>
         <View>
           <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
             <Text>Set Your Weekly Goals</Text>

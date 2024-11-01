@@ -17,6 +17,7 @@ import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import Feather from "react-native-vector-icons/Feather";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import axios from "axios";
+import IpAddress from "../DeviceConfig";
 
 const TagVanueScreen = () => {
   const [venues, setVenues] = useState([]);
@@ -24,7 +25,7 @@ const TagVanueScreen = () => {
   useEffect(() => {
     const fetchVenues = async () => {
       try {
-        const response = await axios.get("http://192.168.0.102:8000/venues");
+        const response = await axios.get(`http://${IpAddress}:8000/venues`);
         setVenues(response.data);
       } catch (error) {
         console.error(error);

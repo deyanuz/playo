@@ -5,18 +5,52 @@ import {
   Image,
   Pressable,
   ScrollView,
+  FlatList,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { useNavigation } from "@react-navigation/native";
+import axios from "axios";
+import Game from "../components/Game";
+import IpAddress from "../DeviceConfig";
+import { AuthContext } from "../AuthContext";
+import UpcomingGames from "../components/UpcomingGames";
 
 const PlayScreen = () => {
   const [option, setOption] = useState("my-sports");
   const [sport, setSport] = useState("badminton");
   const navigation = useNavigation();
-
+  const [games, setGames] = useState([]);
+  const [upcomingGames, setUpcomingGames] = useState([]);
+  const { userID } = useContext(AuthContext);
+  useEffect(() => {
+    fetchGames();
+  }, []);
+  const fetchGames = async () => {
+    try {
+      const response = await axios.get(`http://${IpAddress}:8000/games`);
+      setGames(response.data);
+    } catch (error) {
+      console.error(error.message);
+    }
+  };
+  useEffect(() => {
+    if (userID) {
+      fetchUpcomingGames();
+    }
+  }, []);
+  const fetchUpcomingGames = async () => {
+    try {
+      const response = await axios.get(
+        `http://${IpAddress}:8000/upcoming?userID=${userID}`
+      );
+      setUpcomingGames(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
   return (
     <SafeAreaView>
       <View
@@ -74,7 +108,7 @@ const PlayScreen = () => {
                 color: option === "calender" ? "#fcf005" : "white",
               }}
             >
-              Your Calender
+              Calender
             </Text>
           </Pressable>
           <Pressable onPress={() => setOption("my-sports")}>
@@ -202,7 +236,6 @@ const PlayScreen = () => {
             </Text>
           </Pressable>
         </ScrollView>
-        <View></View>
       </View>
       <View
         style={{
@@ -231,6 +264,22 @@ const PlayScreen = () => {
           </Pressable>
         </View>
       </View>
+      {option == "my-sports" && (
+        <FlatList
+          data={games}
+          renderItem={({ item }) => <Game item={item} />}
+          keyExtractor={(item) => item._id}
+          contentContainerStyle={{ paddingBottom: 20 }}
+        ></FlatList>
+      )}
+      {option == "calender" && (
+        <FlatList
+          data={upcomingGames}
+          renderItem={({ item }) => <UpcomingGames item={item} />}
+          keyExtractor={(item) => item._id}
+          contentContainerStyle={{ paddingBottom: 20 }}
+        ></FlatList>
+      )}
     </SafeAreaView>
   );
 };

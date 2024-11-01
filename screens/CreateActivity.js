@@ -21,6 +21,7 @@ import { BottomModal, ModalContent, SlideAnimation } from "react-native-modals";
 import moment from "moment";
 import { AuthContext } from "../AuthContext";
 import axios from "axios";
+import IpAddress from "../DeviceConfig";
 
 const CreateActivity = () => {
   const [sport, setSport] = useState("");
@@ -35,7 +36,7 @@ const CreateActivity = () => {
   const [taggedVenue, setTaggedVenue] = useState(null);
   const [modalVis, setModalVis] = useState(false);
   const { userID } = useContext(AuthContext);
-  console.log(userID);
+
   useEffect(() => {
     if (route?.params?.timeInterval) {
       setTimeInterval(route?.params?.timeInterval);
@@ -88,7 +89,7 @@ const CreateActivity = () => {
         totalPlayers: totalPlayers,
       };
       const response = await axios.post(
-        "http://192.168.0.102:8000/create-game",
+        `http://${IpAddress}:8000/create-game`,
         gameData
       );
       if (response.status == 200) {

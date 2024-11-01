@@ -6,6 +6,7 @@ import { getRegProgress } from "../registrationUtils";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
+import IpAddress from "../DeviceConfig";
 
 const PreFinalScreen = () => {
   const { token, setToken } = useContext(AuthContext);
@@ -55,7 +56,7 @@ const PreFinalScreen = () => {
   const registerUser = async () => {
     try {
       const res = await axios
-        .post("http://192.168.0.102:8000/register", userData)
+        .post(`http://${IpAddress}:8000/register`, userData)
         .then(async (res) => {
           const token = res.data;
           await AsyncStorage.setItem("token", token);

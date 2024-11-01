@@ -33,17 +33,19 @@ const gameSchema = new mongoose.Schema({
     ref: "User",
     required: true,
   },
-  players: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-  },
+  players: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+  ],
   queries: {
     question: String,
     answer: String,
   },
   requests: [
     {
-      userId: {
+      userID: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
         required: true,

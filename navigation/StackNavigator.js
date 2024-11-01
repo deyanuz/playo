@@ -22,6 +22,7 @@ import { AuthContext } from "../AuthContext";
 import CreateActivity from "../screens/CreateActivity";
 import TagVanueScreen from "../screens/TagVanueScreen";
 import SelectTimeScreen from "../screens/SelectTimeScreen";
+import GameSetupScreen from "../screens/GameSetupScreen";
 
 const StackNavigator = () => {
   const Stack = createNativeStackNavigator();
@@ -155,6 +156,13 @@ const StackNavigator = () => {
         <Stack.Screen
           name="TagVanue"
           component={TagVanueScreen}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="Game"
+          component={GameSetupScreen}
           options={{
             headerShown: false,
           }}

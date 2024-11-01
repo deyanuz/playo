@@ -108,3 +108,145 @@ app.post("/create-game", async (req, res) => {
     res.status(500).json({ message: error });
   }
 });
+
+app.get("/games", async (req, res) => {
+  try {
+    const games = await Game.find({})
+      .populate("admin")
+      .populate("players", "image firstName lastName");
+    const currentDate = moment();
+    const filteredGames = games?.filter((g) => {
+      const gameDate = moment(g.date, "Do MMMM");
+      const gameTime = g.time.split("-")[0];
+      const gameDateTime = moment(
+        `${gameDate.format("YYYY-MM-DD")} ${gameTime}`,
+        "YYYY-MM-DD h:mm A"
+      );
+      return gameDateTime.isAfter(currentDate);
+    });
+
+    const formattedGames = filteredGames.map((game) => ({
+      _id: game._id,
+      sport: game.sport,
+      date: game.date,
+      area: game.area,
+      time: game.time,
+      players: game.players?.map((player) => ({
+        _id: player?._id,
+        imageUrl: player.image,
+        name: `${player.firstName} ${player.lastName}`,
+      })),
+      totalPlayers: game.totalPlayers,
+      queries: game.queries,
+      requests: game.requests,
+      isBooked: game.isBooked,
+      admin: `${game.admin.firstName} ${game.admin.lastName}`,
+      adminUrl: game.admin.image,
+      matchFull: game.matchFull,
+    }));
+    res.status(200).json(formattedGames);
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ message: error });
+  }
+});
+
+app.get("/upcoming", async (req, res) => {
+  try {
+    const userID = req.query.userID;
+    const games = await Game.find({
+      $or: [{ admin: userID }, { players: userID }],
+    })
+      .populate("admin")
+      .populate("players", "image firstName lastName");
+    const formattedGames = games.map((game) => ({
+      _id: game._id,
+      sport: game.sport,
+      date: game.date,
+      area: game.area,
+      time: game.time,
+      players: game.players?.map((player) => ({
+        _id: player?._id,
+        imageUrl: player.image,
+        name: `${player.firstName} ${player.lastName}`,
+      })),
+      totalPlayers: game.totalPlayers,
+      queries: game.queries,
+      requests: game.requests,
+      isBooked: game.isBooked,
+      admin: `${game.admin.firstName} ${game.admin.lastName}`,
+      isUserAdmin: game.admin._id.toString() == userID,
+      adminUrl: game.admin.image,
+      matchFull: game.matchFull,
+    }));
+    res.status(200).json(formattedGames);
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ message: error });
+  }
+});
+
+app.post("/games/:gameID/request", async (req, res) => {
+  try {
+    const { userID, comment } = req.body;
+    const { gameID } = req.params;
+    const game = await Game.findById(gameID);
+    if (!game) {
+      return res.status(404).json({ message: "Invalid game" });
+    }
+    const existingRequest = game?.requests.find(
+      (r) => r.userID.toString() === userID
+    );
+    if (existingRequest) {
+      return res.status(400).json({ message: "Request already sent" });
+    }
+    game.requests.push({ userID, comment });
+    await game.save();
+    return res.status(200).json({ message: "Request sent successfully" });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ message: error });
+  }
+});
+app.get("/gmaes/:gameID/requests", async (req, res) => {
+  try {
+    const { gameID } = req.params;
+    const game = Game.findById(gameID).populate({
+      path: "requests.userID",
+      select: "email firstName lastName image skill nOfGames playpals sports",
+    });
+    if (!game) {
+      res.status(400).json({ message: "Invalid game" });
+    }
+    const requestsWithUserInfo = game.requests?.map((request) => ({
+      userID: request.userID._id,
+      email: request.userID.email,
+      firstName: request.userID.firstName,
+      lastName: request.userID.lastName,
+      image: request.userID.image,
+      skill: request.userID.skill,
+      noOdGames: request.userID.noOdGames,
+      playpals: request.userID.playpals,
+      sports: request.userID.sports,
+      comment: request.comment,
+    }));
+    res.json(requestsWithUserInfo);
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ message: error });
+  }
+});
+
+app.get("/user/:userID", async (req, res) => {
+  try {
+    const { userID } = req.params;
+    const user = await User.findById(userID);
+    if (!user) {
+      res.status(400).json({ message: "Invalid user" });
+    }
+    res.status(200).json(user);
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ message: error });
+  }
+});
