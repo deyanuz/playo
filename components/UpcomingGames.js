@@ -69,32 +69,21 @@ const UpcomingGames = ({ item }) => {
             }}
           >
             {item?.isBooked ? (
-              <>
+              <View
+                style={{
+                  justifyContent: "center",
+                  alignItems: "center",
+                  backgroundColor: "#c518f0",
+                  paddingVertical: 10,
+                  borderRadius: 7,
+                }}
+              >
                 <Text
-                  style={{
-                    textAlign: "center",
-                    fontWeight: "500",
-                    fontSize: 13,
-                    paddingVertical: 10,
-                  }}
+                  style={{ fontSize: 13, fontWeight: "500", color: "white" }}
                 >
-                  {item?.courtNumber}
+                  Booked
                 </Text>
-                <View
-                  style={{
-                    justifyContent: "center",
-                    alignItems: "center",
-                    backgroundColor: "#c518f0",
-                    paddingVertical: 5,
-                  }}
-                >
-                  <Text
-                    style={{ fontSize: 13, fontWeight: "500", color: "white" }}
-                  >
-                    Booked
-                  </Text>
-                </View>
-              </>
+              </View>
             ) : (
               <>
                 <Text style={{ textAlign: "center", fontWeight: "500" }}>

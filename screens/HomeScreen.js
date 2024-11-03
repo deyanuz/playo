@@ -15,6 +15,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import IpAddress from "../DeviceConfig";
 import { AuthContext } from "../AuthContext";
+import "core-js/stable/atob";
+import { jwtDecode } from "jwt-decode";
 
 const HomeScreen = () => {
   const navigation = useNavigation();
@@ -40,7 +42,7 @@ const HomeScreen = () => {
           <Ionicons name="chatbox-outline" size={27} color="black" />
           <Ionicons name="notifications-outline" size={27} color="black" />
 
-          <Pressable onPress={clearAuthToken}>
+          <Pressable onPress={() => navigation.navigate("PROFILE")}>
             <Image
               style={{ width: 30, height: 30, borderRadius: 15 }}
               source={{
@@ -82,15 +84,7 @@ const HomeScreen = () => {
       description: "Show more",
     },
   ];
-  const clearAuthToken = async () => {
-    try {
-      await AsyncStorage.removeItem("token");
-      setToken("");
-      setUserID("");
-    } catch (error) {
-      console.log(error);
-    }
-  };
+
   useEffect(() => {
     if (userID) {
       fetchUser();
@@ -100,6 +94,18 @@ const HomeScreen = () => {
     const response = await axios.get(`http://${IpAddress}:8000/user/${userID}`);
     setUser(response.data);
   };
+  useEffect(() => {
+    const fetchUser = async () => {
+      const token = await AsyncStorage.getItem("token");
+      if (token) {
+        const decodedToken = jwtDecode(token);
+        const userID = decodedToken.userID;
+        setUserID(userID);
+      }
+    };
+
+    fetchUser();
+  }, []);
   return (
     <ScrollView style={{ flex: 1, backgroundColor: "#f8f8f8" }}>
       <View
@@ -187,6 +193,9 @@ const HomeScreen = () => {
           You have no Games today
         </Text>
         <Pressable
+          onPress={() =>
+            navigation.navigate("PLAY", { initialOption: "calender" })
+          }
           style={{
             marginTop: 10,
             marginLeft: "auto",
@@ -213,7 +222,10 @@ const HomeScreen = () => {
           gap: 8,
         }}
       >
-        <Pressable style={{ flex: 1 }}>
+        <Pressable
+          onPress={() => navigation.navigate("PLAY")}
+          style={{ flex: 1 }}
+        >
           <View style={{ borderRadius: 10 }}>
             <Image
               style={{ width: 180, height: 120, borderRadius: 10 }}

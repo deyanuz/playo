@@ -47,17 +47,17 @@ app.post("/login", async (req, res) => {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
     if (!user) {
-      res.status(401).json({ message: "user not found" });
+      return res.status(401).json({ message: "user not found" });
     }
     if (user.password !== password) {
-      res.status(401).json({ message: "incorrect password" });
+      return res.status(401).json({ message: "incorrect password" });
     }
     const secretKey = crypto.randomBytes(32).toString("hex");
     const token = jwt.sign({ userID: user._id }, secretKey);
-    res.status(200).json(token);
+    return res.status(200).json(token);
   } catch (error) {
     console.error(error);
-    res.status().json({ error: "login error" });
+    res.status(400).json({ error: "login error" });
   }
 });
 
@@ -208,13 +208,14 @@ app.post("/games/:gameID/request", async (req, res) => {
     res.status(500).json({ message: error });
   }
 });
-app.get("/gmaes/:gameID/requests", async (req, res) => {
+app.get("/games/:gameID/requests", async (req, res) => {
   try {
     const { gameID } = req.params;
-    const game = Game.findById(gameID).populate({
+    const game = await Game.findById(gameID).populate({
       path: "requests.userID",
       select: "email firstName lastName image skill nOfGames playpals sports",
     });
+
     if (!game) {
       res.status(400).json({ message: "Invalid game" });
     }
@@ -245,6 +246,90 @@ app.get("/user/:userID", async (req, res) => {
       res.status(400).json({ message: "Invalid user" });
     }
     res.status(200).json(user);
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ message: error });
+  }
+});
+
+app.post("/accept", async (req, res) => {
+  try {
+    const { gameID, userID } = req.body;
+    const game = await Game.findById(gameID);
+    if (!game) {
+      return res.status(400).json({ message: "Invalid game" });
+    }
+    game.players.push(userID);
+    await Game.findByIdAndUpdate(
+      gameID,
+      {
+        $pull: { requests: { userID: userID } },
+      },
+      { new: true }
+    );
+
+    await game.save();
+    res.status(200).json({ message: "accepted" });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ message: error });
+  }
+});
+
+app.get("/games/:gameID/players", async (req, res) => {
+  try {
+    const { gameID } = req.params;
+    const game = await Game.findById(gameID).populate("players");
+
+    if (!game) {
+      res.status(400).json({ message: "Invalid game" });
+    }
+    res.status(200).json(game.players);
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ message: error });
+  }
+});
+
+app.post("/book", async (req, res) => {
+  try {
+    const { courtNumber, date, time, userID, name, game } = req.body;
+    const venue = await Venue.findOne({ name: name });
+
+    if (!venue) {
+      res.status(404).json({ message: "Invalid venue" });
+    }
+    const bookingConflict =
+      venue?.bookings &&
+      venue.bookings.find(
+        (b) => b.courtNumber == courtNumber && b.date == date && b.time == time
+      );
+    if (bookingConflict) {
+      res.status(404).json({ message: "Already booked" });
+    }
+    venue.bookings.push({ courtNumber, date, time, user: userID, game });
+    await venue.save();
+    await Game.findByIdAndUpdate(game, {
+      isBooked: true,
+      courtNumber: courtNumber,
+    });
+    res.status(200).json({ message: "success", venue });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ message: error });
+  }
+});
+
+app.post("/toggle-matchfull", async (req, res) => {
+  try {
+    const { gameID } = req.body;
+    const game = await Game.findById(gameID);
+    if (!game) {
+      res.status(400).json({ message: "Invalid game" });
+    }
+    game.matchFull = !game.matchFull;
+    await game.save();
+    res.status(200).json({ message: "success", matchFull: game.matchFull });
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ message: error });

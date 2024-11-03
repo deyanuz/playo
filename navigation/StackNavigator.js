@@ -5,7 +5,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import HomeScreen from "../screens/HomeScreen";
 import PlayScreen from "../screens/PlayScreen";
 import BookScreen from "../screens/BookScreen";
-import ProfileScreen from "../screens/ProfileScreen";
+import ProfileDetailScreen from "../screens/ProfileDetailScreen";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
@@ -23,6 +23,10 @@ import CreateActivity from "../screens/CreateActivity";
 import TagVanueScreen from "../screens/TagVanueScreen";
 import SelectTimeScreen from "../screens/SelectTimeScreen";
 import GameSetupScreen from "../screens/GameSetupScreen";
+import ManageScreen from "../screens/ManageScreen";
+import SlotScreen from "../screens/SlotScreen";
+import PaymentScreen from "../screens/PaymentScreen";
+import PlayersScreen from "../screens/PlayersScreen";
 
 const StackNavigator = () => {
   const Stack = createNativeStackNavigator();
@@ -74,7 +78,7 @@ const StackNavigator = () => {
         />
         <Tab.Screen
           name="PROFILE"
-          component={ProfileScreen}
+          component={ProfileDetailScreen}
           options={{
             tabBarActiveTintColor: "green",
             tabBarIcon: ({ focused }) =>
@@ -163,6 +167,34 @@ const StackNavigator = () => {
         <Stack.Screen
           name="Game"
           component={GameSetupScreen}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="Manage"
+          component={ManageScreen}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="Slot"
+          component={SlotScreen}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="Payment"
+          component={PaymentScreen}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="Players"
+          component={PlayersScreen}
           options={{
             headerShown: false,
           }}

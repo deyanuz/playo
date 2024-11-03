@@ -8,13 +8,13 @@ import {
   TextInput,
   View,
 } from "react-native";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import Entypo from "react-native-vector-icons/Entypo";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import { useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { BottomModal, ModalContent, SlideAnimation } from "react-native-modals";
 import axios from "axios";
 import IpAddress from "../DeviceConfig";
@@ -25,6 +25,26 @@ const GameSetupScreen = () => {
   const [modalVis, setModalVis] = useState(false);
   const [comment, setComment] = useState("");
   const { userID, setUserID, setToken } = useContext(AuthContext);
+  const [matchFull, setMatchFull] = useState(false);
+  const toggleMatchFull = async (gameID) => {
+    try {
+      const response = await axios.post(
+        `http://${IpAddress}:8000/toggle-matchfull`,
+        { gameID }
+      );
+      if (response.status == 200) {
+        Alert.alert("Success", "Match full status updated");
+        setMatchFull(!matchFull);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  const userRequested = route?.params?.item?.requests.some(
+    (req) => req.userID == userID
+  );
+  const navigation = useNavigation();
+  const gameID = route?.params?.item?._id;
   const sendJoinReq = async (gameID) => {
     try {
       const response = await axios.post(
@@ -45,10 +65,40 @@ const GameSetupScreen = () => {
       console.log(error.message);
     }
   };
+  const [venues, setVenues] = useState([]);
+  useEffect(() => {
+    const fetchVenues = async () => {
+      try {
+        const response = await axios.get(`http://${IpAddress}:8000/venues`);
+        setVenues(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchVenues();
+  }, []);
+  const venue = venues.find((i) => i?.name == route?.params?.item?.area);
+  const [startTime, endTime] = route?.params?.item?.time
+    .split("-")
+    .map((t) => t.trim());
+  const [players, setPlayers] = useState([]);
+  useEffect(() => {
+    fetchPlayers();
+  }, []);
+  const fetchPlayers = async () => {
+    try {
+      const response = await axios.get(
+        `http://${IpAddress}:8000/games/${gameID}/players`
+      );
+      setPlayers(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
   return (
     <>
       <SafeAreaView>
-        <ScrollView style={{ marginBottom: 60 }}>
+        <ScrollView style={{ marginBottom: 80 }}>
           <View
             style={{
               padding: 15,
@@ -111,7 +161,16 @@ const GameSetupScreen = () => {
                 >
                   Match Full
                 </Text>
-                <FontAwesome name="toggle-off" size={25} color="white" />
+                <FontAwesome
+                  onPress={() => toggleMatchFull(route?.params?.item?._id)}
+                  name={
+                    matchFull || route?.params?.item?.matchFull == true
+                      ? "toggle-on"
+                      : "toggle-off"
+                  }
+                  size={25}
+                  color="white"
+                />
               </View>
             </View>
             <View style={{ marginTop: 10 }}>
@@ -120,6 +179,18 @@ const GameSetupScreen = () => {
               </Text>
             </View>
             <Pressable
+              onPress={() => {
+                navigation.navigate("Slot", {
+                  place: route?.params?.item?.area,
+                  sports: venue?.sportsAvailable,
+                  date: route?.params?.item?.date,
+                  slot: route?.params?.item?.time,
+                  startTime: startTime,
+                  endTime: endTime,
+                  gameID: route?.params?.item?._id,
+                  bookings: venue?.bookings,
+                });
+              }}
               style={{
                 flexDirection: "row",
                 alignItems: "center",
@@ -362,6 +433,12 @@ const GameSetupScreen = () => {
 
                   <Pressable>
                     <Pressable
+                      onPress={() => {
+                        navigation.navigate("Manage", {
+                          userID: userID,
+                          gameID: route?.params?.item?._id,
+                        });
+                      }}
                       style={{
                         width: 60,
                         height: 60,
@@ -392,6 +469,11 @@ const GameSetupScreen = () => {
 
                   <Pressable>
                     <Pressable
+                      onPress={() =>
+                        navigation.navigate("Players", {
+                          players: players,
+                        })
+                      }
                       style={{
                         width: 60,
                         height: 60,
@@ -470,6 +552,11 @@ const GameSetupScreen = () => {
                 }}
               >
                 <Pressable
+                  onPress={() =>
+                    navigation.navigate("Players", {
+                      players: players,
+                    })
+                  }
                   style={{
                     width: 60,
                     height: 60,
@@ -543,6 +630,28 @@ const GameSetupScreen = () => {
             }}
           >
             Game Chat
+          </Text>
+        </Pressable>
+      ) : userRequested ? (
+        <Pressable
+          style={{
+            backgroundColor: "#fcf005",
+            marginTop: "auto",
+            marginBottom: 30,
+            padding: 15,
+            marginHorizontal: 15,
+            borderRadius: 4,
+          }}
+        >
+          <Text
+            style={{
+              textAlign: "center",
+              color: "red",
+              fontSize: 15,
+              fontWeight: "bold",
+            }}
+          >
+            CANCEL REQUEST
           </Text>
         </Pressable>
       ) : (

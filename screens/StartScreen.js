@@ -120,6 +120,7 @@ const StartScreen = () => {
           </Text>
         </View>
         <Pressable
+          onPress={() => navigation.navigate("Login")}
           style={{
             marginTop: 40,
             justifyContent: "center",

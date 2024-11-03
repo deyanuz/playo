@@ -7,11 +7,15 @@ import {
   ScrollView,
   FlatList,
 } from "react-native";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import { useNavigation } from "@react-navigation/native";
+import {
+  useFocusEffect,
+  useNavigation,
+  useRoute,
+} from "@react-navigation/native";
 import axios from "axios";
 import Game from "../components/Game";
 import IpAddress from "../DeviceConfig";
@@ -19,15 +23,22 @@ import { AuthContext } from "../AuthContext";
 import UpcomingGames from "../components/UpcomingGames";
 
 const PlayScreen = () => {
-  const [option, setOption] = useState("my-sports");
   const [sport, setSport] = useState("badminton");
   const navigation = useNavigation();
   const [games, setGames] = useState([]);
   const [upcomingGames, setUpcomingGames] = useState([]);
   const { userID } = useContext(AuthContext);
+  const route = useRoute();
+  const initialOption = route?.params?.initialOption || "my-sports";
+  const [option, setOption] = useState(initialOption);
   useEffect(() => {
     fetchGames();
   }, []);
+  useEffect(() => {
+    if (initialOption) {
+      setOption(initialOption);
+    }
+  }, [initialOption]);
   const fetchGames = async () => {
     try {
       const response = await axios.get(`http://${IpAddress}:8000/games`);
@@ -51,6 +62,13 @@ const PlayScreen = () => {
       console.error(error);
     }
   };
+  useFocusEffect(
+    useCallback(() => {
+      if (userID) {
+        fetchGames();
+      }
+    }, [userID])
+  );
   return (
     <SafeAreaView>
       <View

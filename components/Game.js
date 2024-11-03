@@ -1,11 +1,14 @@
 import { Pressable, StyleSheet, Text, View, Image } from "react-native";
-import React from "react";
+import React, { useContext } from "react";
 import Feather from "react-native-vector-icons/Feather";
 import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
 import { useNavigation } from "@react-navigation/native";
+import { AuthContext } from "../AuthContext";
 
 const Game = ({ item }) => {
   const navigation = useNavigation();
+  const { userID } = useContext(AuthContext);
+  const userRequests = item?.requests.some((req) => req.userID == userID);
   return (
     <Pressable
       onPress={() => navigation.navigate("Game", { item: item })}
@@ -78,7 +81,13 @@ const Game = ({ item }) => {
             </Text>
           </View>
         </View>
-        <View>
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
           <View>
             <Text style={{ marginTop: 10, color: "gray", fontSize: 15 }}>
               {item?.admin}
@@ -87,15 +96,15 @@ const Game = ({ item }) => {
               {item?.date}, {item?.time}
             </Text>
           </View>
+          {item?.matchFull && (
+            <Image
+              style={{ width: 100, height: 70, resizeMode: "contain" }}
+              source={{
+                uri: "https://playo.co/_next/image?url=https%3A%2F%2Fplayo-website.gumlet.io%2Fplayo-website-v3%2Fmatch_full.png&w=256&q=75",
+              }}
+            />
+          )}
         </View>
-        {item?.matchFull && (
-          <Image
-            style={{ width: 100, height: 70, resizeMode: "contain" }}
-            source={{
-              uri: "https://playo.co/_next/image?url=https%3A%2F%2Fplayo-website.gumlet.io%2Fplayo-website-v3%2Fmatch_full.png&w=256&q=75",
-            }}
-          />
-        )}
       </View>
       <View
         style={{
@@ -135,6 +144,21 @@ const Game = ({ item }) => {
             Intermideate to Advanced
           </Text>
         </View>
+        {userRequests && (
+          <View
+            style={{
+              backgroundColor: "#fffbde",
+              paddingHorizontal: 10,
+              paddingVertical: 4,
+              borderRadius: 7,
+              marginTop: 10,
+              borderColor: "#eedc82",
+              borderWidth: 1,
+            }}
+          >
+            <Text>Requested</Text>
+          </View>
+        )}
       </View>
     </Pressable>
   );
